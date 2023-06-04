@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.4.5'
+    id 'org.graalvm.buildtools.native' version '0.9.22'
+}
+
+group 'org.ntbuild'
+version '1.0-SNAPSHOT'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2020.0.2"
+    }
+}
+
+tasks.withType(org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask).configureEach {
+    disableToolchainDetection = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+graalvmNative {
+    binaries {
+        main {
+            mainClass = 'org.ntbuild.Main'
+            useFatJar = true
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
